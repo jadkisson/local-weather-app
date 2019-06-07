@@ -4,12 +4,20 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "open": "ng serve --open",
-    "build": "ng build",
+    "standardize": "prettier **/*.ts --write",
+    "start": "npm run standardize && ng serve --port 5000",
+    "open": "npm run standardize && ng serve --port 5000 --open",
+    "build": "npm run standardize && ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
+  },
+  "prettier": {
+    "printWidth": 90,
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "parser": "typescript"
   },
   "private": true,
   "dependencies": {
@@ -42,6 +50,7 @@
     "karma-coverage-istanbul-reporter": "~2.0.1",
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.0",
+    "prettier": "^1.18.0",
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.15.0",
