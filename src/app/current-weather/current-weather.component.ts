@@ -8,14 +8,7 @@ import { WeatherService } from '../weather/weather.service'
   styleUrls: ['./current-weather.component.scss'],
 })
 export class CurrentWeatherComponent implements OnInit {
-  current: ICurrentWeather // = {
-  //   city: '',
-  //   country: '',
-  //   date: 0,
-  //   image: '',
-  //   temperature: 0,
-  //   description: '',
-  // }
+  current: ICurrentWeather
 
   constructor(private weatherService: WeatherService) {}
 
@@ -23,5 +16,12 @@ export class CurrentWeatherComponent implements OnInit {
     this.weatherService
       .getCurrentWeather('Key West', 'US')
       .subscribe(data => (this.current = data))
+  }
+
+  getOrdinal(date: number) {
+    const n = new Date(date).getDate()
+    return n > 0
+      ? ['th', 'st', 'nd', 'rd'][(n > 3 && n < 21) || n % 10 > 3 ? 0 : n % 10]
+      : ''
   }
 }
