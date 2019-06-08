@@ -11,7 +11,24 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "test:debug": "ng test --sourceMap=false"
+    "test:debug": "ng test --sourceMap=false",
+    "predocker:build": "npm run build -- --prod --output-path dist && npm test -- --watch=false && npm run e2e",
+    "docker:build": "cross-conf-env docker image build . -t $npm_package_config_imageRepo:$npm_package_version",
+    "postdocker:build": "npm run docker:tag",
+    "docker:tag": " cross-conf-env docker image tag $npm_package_config_imageRepo:$npm_package_version $npm_package_config_imageRepo:latest",
+    "docker:run": "run-s -c docker:clean docker:runHelper",
+    "docker:runHelper": "cross-conf-env docker run -e NODE_ENV=local --name $npm_package_config_imageName -d -p $npm_package_config_imagePort:$npm_package_config_internalContainerPort $npm_package_config_imageRepo",
+    "predocker:publish": "echo Attention! Ensure `docker login` is correct.",
+    "docker:publish": "cross-conf-env docker image push $npm_package_config_imageRepo:$npm_package_version",
+    "postdocker:publish": "cross-conf-env docker image push $npm_package_config_imageRepo:latest",
+    "docker:clean": "cross-conf-env docker rm -f $npm_package_config_imageName",
+    "predocker:taillogs": "echo Web Server Logs:",
+    "docker:taillogs": "cross-conf-env docker logs -f $npm_package_config_imageName",
+    "docker:open:win": "echo Trying to launch on Windows && timeout 2 && start http://localhost:%npm_package_config_imagePort%",
+    "docker:open:mac": "echo Trying to launch on MacOS && sleep 2 && URL=http://localhost:$npm_package_config_imagePort && open $URL",
+    "docker:debugmessage": "echo Docker Debug Completed Successfully! Hit Ctrl+C to terminate log tailing.",
+    "predocker:debug": "run-s docker:build docker:run",
+    "docker:debug": "run-s -cs docker:open:win docker:open:mac docker:debugmessage docker:taillogs"
   },
   "prettier": {
     "printWidth": 90,
@@ -19,6 +36,12 @@
     "singleQuote": true,
     "trailingComma": "es5",
     "parser": "typescript"
+  },
+  "config": {
+    "imageRepo": "jeffadkisson/localcast-weather",
+    "imageName": "localcast-weather",
+    "imagePort": "5000",
+    "internalContainerPort": "3000"
   },
   "private": true,
   "dependencies": {
@@ -44,6 +67,7 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",
     "codelyzer": "^5.0.0",
+    "cross-conf-env": "^1.1.2",
     "dev-norms": "1.7.0",
     "jasmine-core": "~3.4.0",
     "jasmine-spec-reporter": "~4.2.1",
@@ -52,6 +76,7 @@
     "karma-coverage-istanbul-reporter": "~2.0.1",
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.0",
+    "npm-run-all": "^4.1.5",
     "prettier": "^1.18.0",
     "protractor": "^5.4.2",
     "ts-node": "~7.0.0",
