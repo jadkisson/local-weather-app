@@ -28,6 +28,9 @@ export class CitySearchComponent implements OnInit {
           .subscribe(data => this.weatherService.currentWeather.next(data))
       }
     })
+
+    // set default value
+    this.search.setValue('Atlanta, US')
   }
 
   public getErrorMessage() {
